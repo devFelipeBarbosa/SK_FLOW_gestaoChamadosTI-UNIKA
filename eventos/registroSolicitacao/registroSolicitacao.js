@@ -1,7 +1,7 @@
 // Registro da Solicitação - na tabela AD_CHAMADOSTI (INICIALIZACÃO)
 var solicitacao = getIdInstanceProcesso(); // ID da Solicitação
 var codUsu = getUsuarioInclusao(); // ID do Usuário Solicitante
-var tabChamado = getLinhasFormulario("AD_CHAMADOSTI"); // Retorna as linhas Tabela de Chamados TI
+var tabChamado = getLinhasFormulario("AD_CHAMADOTI"); // Retorna as linhas Tabela de Chamados TI
 var linhaExistente = false; // Boleano para verificar existência de chamado TI para a solicitação
 
 // Campos do Formulário Embarcado
@@ -24,7 +24,7 @@ for (var i = 0; i < tabChamado.length; i++) {
 
     if (!linhaExistente) {
 
-        var novaLinhaTabChamado = novaLinhaFormulario("AD_CHAMADOSTI");
+        var novaLinhaTabChamado = novaLinhaFormulario("AD_CHAMADOTI");
         novaLinhaTabChamado.setCampo("CODUSU", codUsu);
         novaLinhaTabChamado.setCampo("TIPO", tipo);
         novaLinhaTabChamado.setCampo("ID_CATEGORIATI", categoria);
@@ -36,23 +36,16 @@ for (var i = 0; i < tabChamado.length; i++) {
         novaLinhaTabChamado.setCampo("URGENCIA", urgencia);
         novaLinhaTabChamado.setCampo("IMPACTO", urgencia); // regra de negócio inicial: Impacto igual Urgência
         novaLinhaTabChamado.setCampo("PRIORIDADE", 'M');
-
-        if (anexo1 && anexo1 instanceof Blob) {
-            novaLinhaTabChamado.setCampo("ANEXO1", anexo1, true);
-        } else {
+        
+        if (anexo1) {
             novaLinhaTabChamado.setCampo("ANEXO1", anexo1);
         }
-        if (anexo2 && anexo2 instanceof Blob) {
-            novaLinhaTabChamado.setCampo("ANEXO2", anexo2, true);
-        } else {
+        if (anexo2) {
             novaLinhaTabChamado.setCampo("ANEXO2", anexo2);
         }
-        if (anexo3 && anexo3 instanceof Blob) {
-            novaLinhaTabChamado.setCampo("ANEXO3", anexo3, true);
-        } else {
+        if (anexo3) {
             novaLinhaTabChamado.setCampo("ANEXO3", anexo3);
         }
-
         novaLinhaTabChamado.setCampo("CICLO1", 'NA'); // regra de negócio inicial: CICLO1 inicial igual a NA
         novaLinhaTabChamado.setCampo("CODUSUALTER", codUsu);
         novaLinhaTabChamado.setCampo("TERCEIRO", 'NA'); // TERCEIRO regra do negócio: igual a NA no inicio
@@ -83,19 +76,13 @@ for (var i = 0; i < tabChamado.length; i++) {
         tabChamado[i].setCampo("IMPACTO", urgencia); // regra de negócio inicial: Impacto igual Urgência
         tabChamado[i].setCampo("PRIORIDADE", 'M');
 
-        if (anexo1 && anexo1 instanceof Blob) {
-            tabChamado[i].setCampo("ANEXO1", anexo1, true);
-        } else {
+        if (anexo1) {
             tabChamado[i].setCampo("ANEXO1", anexo1);
         }
-        if (anexo2 && anexo2 instanceof Blob) {
-            tabChamado[i].setCampo("ANEXO2", anexo2, true);
-        } else {
+        if (anexo2) {
             tabChamado[i].setCampo("ANEXO2", anexo2);
         }
-        if (anexo3 && anexo3 instanceof Blob) {
-            tabChamado[i].setCampo("ANEXO3", anexo3, true);
-        } else {
+        if (anexo3) {
             tabChamado[i].setCampo("ANEXO3", anexo3);
         }
 
