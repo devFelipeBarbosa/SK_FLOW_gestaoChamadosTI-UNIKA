@@ -53,7 +53,7 @@ function prepararAnexo(anexo) {
             return obj.trim() ? obj : null;
         }
 
-        var camposPossiveis = ['base64', 'conteudo', 'content', 'valor', 'value'];
+        var camposPossiveis = ['base64', 'conteudo', 'content', 'valor', 'value', 'binary'];
         for (var idx = 0; idx < camposPossiveis.length; idx++) {
             var chave = camposPossiveis[idx];
             if (obj.hasOwnProperty(chave)) {
@@ -122,6 +122,7 @@ function prepararAnexo(anexo) {
         file: conteudo,
         conteudo: conteudo,
         value: conteudo,
+        binary: conteudo,
         fileName: nome,
         nomeArquivo: nome,
         contentType: tipo,
@@ -135,7 +136,6 @@ function aplicarAnexo(linha, campo, valor) {
         linha.setCampo(campo, anexoFormatado);
     }
 }
-
 
 // Verifica se já existe uma linha na tabela de chamados TI para a solicitação atual 
 for (var i = 0; i < tabChamado.length; i++) {
