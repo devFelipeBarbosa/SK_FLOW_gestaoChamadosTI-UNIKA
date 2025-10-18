@@ -16,6 +16,127 @@ var anexo1 = getCampo("ANEXO1");
 var anexo2 = getCampo("ANEXO2");
 var anexo3 = getCampo("ANEXO3");
 
+function prepararAnexo(anexo) {
+    if (!anexo) {
+        return null;
+    }
+
+    var anexoTratado = anexo;
+
+    if (typeof anexoTratado === 'string') {
+        var texto = anexoTratado.trim();
+        if (!texto) {
+            return null;
+        }
+
+        try {
+            anexoTratado = JSON.parse(texto);
+        } catch (e) {
+            return {
+                file: texto,
+                conteudo: texto,
+                value: texto,
+                fileName: 'anexo',
+                nomeArquivo: 'anexo',
+                contentType: 'application/octet-stream',
+                tipoConteudo: 'application/octet-stream'
+            };
+        }
+    }
+
+    if (!anexoTratado || typeof anexoTratado !== 'object') {
+        return null;
+    }
+
+    function obterConteudo(obj) {
+        if (typeof obj === 'string') {
+            return obj.trim() ? obj : null;
+        }
+
+        var camposPossiveis = ['base64', 'conteudo', 'content', 'valor', 'value'];
+        for (var idx = 0; idx < camposPossiveis.length; idx++) {
+            var chave = camposPossiveis[idx];
+            if (obj.hasOwnProperty(chave)) {
+                var valor = obj[chave];
+                if (typeof valor === 'string' && valor.trim()) {
+                    return valor;
+                }
+            }
+        }
+
+        if (obj.file) {
+            if (typeof obj.file === 'string' && obj.file.trim()) {
+                return obj.file;
+            }
+
+            if (typeof obj.file === 'object') {
+                return obterConteudo(obj.file);
+            }
+        }
+
+        return null;
+    }
+
+    var conteudo = obterConteudo(anexoTratado);
+    if (!conteudo) {
+        return null;
+    }
+
+    function obterNome(obj) {
+        var camposNome = ['nomeArquivo', 'nome', 'name', 'fileName'];
+        for (var iNome = 0; iNome < camposNome.length; iNome++) {
+            var chaveNome = camposNome[iNome];
+            if (obj.hasOwnProperty(chaveNome) && obj[chaveNome]) {
+                return obj[chaveNome];
+            }
+        }
+
+        if (obj.file && typeof obj.file === 'object') {
+            return obterNome(obj.file);
+        }
+
+        return null;
+    }
+
+    var nome = obterNome(anexoTratado) || 'anexo';
+
+    function obterTipo(obj) {
+        var camposTipo = ['tipoConteudo', 'contentType', 'tipo', 'type'];
+        for (var iTipo = 0; iTipo < camposTipo.length; iTipo++) {
+            var chaveTipo = camposTipo[iTipo];
+            if (obj.hasOwnProperty(chaveTipo) && obj[chaveTipo]) {
+                return obj[chaveTipo];
+            }
+        }
+
+        if (obj.file && typeof obj.file === 'object') {
+            return obterTipo(obj.file);
+        }
+
+        return null;
+    }
+
+    var tipo = obterTipo(anexoTratado) || 'application/octet-stream';
+
+    return {
+        file: conteudo,
+        conteudo: conteudo,
+        value: conteudo,
+        fileName: nome,
+        nomeArquivo: nome,
+        contentType: tipo,
+        tipoConteudo: tipo
+    };
+}
+
+function aplicarAnexo(linha, campo, valor) {
+    var anexoFormatado = prepararAnexo(valor);
+    if (anexoFormatado) {
+        linha.setCampo(campo, anexoFormatado);
+    }
+}
+
+
 // Verifica se já existe uma linha na tabela de chamados TI para a solicitação atual 
 for (var i = 0; i < tabChamado.length; i++) {
     if (tabChamado[i].getCampo("IDINSTPRN") == solicitacao) {
@@ -94,53 +215,3 @@ if (!linhaExistente) {
 
 }
 
-
-function prepararAnexo(anexo) {
-    if (!anexo) {
-        return null;
-    }
-
-    if (typeof anexo === 'string') {
-        try {
-            anexo = JSON.parse(anexo);
-        } catch (e) {
-            return {
-                file: anexo,
-                conteudo: anexo,
-                fileName: 'anexo',
-                nomeArquivo: 'anexo',
-                contentType: 'application/octet-stream',
-                tipoConteudo: 'application/octet-stream'
-            };
-        }
-    }
-
-    var conteudo = anexo.base64 || anexo.conteudo || anexo.content || anexo.file || anexo.valor || anexo.value || null;
-    var nome = anexo.nomeArquivo || anexo.nome || anexo.name || anexo.fileName || null;
-    var tipo = anexo.tipoConteudo || anexo.contentType || anexo.tipo || anexo.type || 'application/octet-stream';
-
-    if (!conteudo) {
-        return null;
-    }
-
-    if (!nome) {
-        nome = 'anexo';
-    }
-
-    return {
-        file: conteudo,
-        conteudo: conteudo,
-        value: conteudo,
-        fileName: nome,
-        nomeArquivo: nome,
-        contentType: tipo,
-        tipoConteudo: tipo
-    };
-}
-
-function aplicarAnexo(linha, campo, valor) {
-    var anexoFormatado = prepararAnexo(valor);
-    if (anexoFormatado) {
-        linha.setCampo(campo, anexoFormatado);
-    }
-}
