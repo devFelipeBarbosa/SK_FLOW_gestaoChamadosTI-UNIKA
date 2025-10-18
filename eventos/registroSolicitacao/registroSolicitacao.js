@@ -93,15 +93,45 @@ if (!linhaExistente) {
     }
 }
 
+function ehString(valor) {
+    if (valor === null || valor === undefined) {
+        return false;
+    }
+
+    if (typeof valor === 'string' || valor instanceof String) {
+        return true;
+    }
+
+    if (typeof valor === 'object') {
+        if (typeof valor.getClass === 'function') {
+            try {
+                var nomeClasse = valor.getClass().getName();
+
+                if (nomeClasse && nomeClasse.indexOf('java.lang.String') !== -1) {
+                    return true;
+                }
+            } catch (e) {
+                // ignora erros ao tentar identificar o tipo Java
+            }
+        }
+
+        var tag = Object.prototype.toString.call(valor);
+
+        if (tag === '[object String]' || tag === '[object java.lang.String]') {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 function normalizarEstrutura(valor) {
     if (valor === null || valor === undefined) {
         return null;
     }
 
-    var tipo = typeof valor;
-
-    if (tipo === 'string') {
-        var texto = valor.trim();
+    if (ehString(valor)) {
+        var texto = String(valor).trim();
 
         if (!texto || texto === 'binary') {
             return null;
@@ -109,6 +139,8 @@ function normalizarEstrutura(valor) {
 
         return texto;
     }
+
+    var tipo = typeof valor;
 
     if (tipo === 'number' || tipo === 'boolean') {
         return valor;
@@ -133,7 +165,15 @@ function normalizarEstrutura(valor) {
         var possuiDados = false;
 
         for (var chave in valor) {
-            if (!valor.hasOwnProperty(chave)) {
+            var possuiPropriedade = true;
+
+            try {
+                possuiPropriedade = Object.prototype.hasOwnProperty.call(valor, chave);
+            } catch (e) {
+                // desconsidera erro ao verificar propriedades herdadas
+            }
+
+            if (!possuiPropriedade) {
                 continue;
             }
 
