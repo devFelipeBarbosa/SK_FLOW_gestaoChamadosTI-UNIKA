@@ -93,110 +93,115 @@ if (!linhaExistente) {
     }
 }
 
-function prepararAnexo(anexo) {
-    if (!anexo) {
+function normalizarEstrutura(valor) {
+    if (valor === null || valor === undefined) {
         return null;
     }
 
-    var anexoTratado = anexo;
+    var tipo = typeof valor;
 
-    if (typeof anexoTratado === 'string') {
-        var texto = anexoTratado.trim();
-        if (!texto) {
+    if (tipo === 'string') {
+        var texto = valor.trim();
+
+        if (!texto || texto === 'binary') {
+            return null;
+        }
+
+        return texto;
+    }
+
+    if (tipo === 'number' || tipo === 'boolean') {
+        return valor;
+    }
+
+    if (Array.isArray(valor)) {
+        var arrNormalizado = [];
+
+        for (var i = 0; i < valor.length; i++) {
+            var itemNormalizado = normalizarEstrutura(valor[i]);
+
+            if (itemNormalizado !== null) {
+                arrNormalizado.push(itemNormalizado);
+            }
+        }
+
+        return arrNormalizado.length ? arrNormalizado : null;
+    }
+
+    if (tipo === 'object') {
+        var objetoNormalizado = {};
+        var possuiDados = false;
+
+        for (var chave in valor) {
+            if (!valor.hasOwnProperty(chave)) {
+                continue;
+            }
+
+            var valorNormalizado = normalizarEstrutura(valor[chave]);
+
+            if (valorNormalizado !== null) {
+                objetoNormalizado[chave] = valorNormalizado;
+                possuiDados = true;
+            }
+        }
+
+        return possuiDados ? objetoNormalizado : null;
+    }
+
+    return null;
+}
+
+function serializarAnexo(valor) {
+    var normalizado = normalizarEstrutura(valor);
+
+    if (normalizado === null) {
+        return null;
+    }
+
+    if (typeof normalizado === 'string') {
+        return normalizado;
+    }
+
+    try {
+        return JSON.stringify(normalizado);
+    } catch (e) {
+        return null;
+    }
+}
+
+function prepararAnexo(valor) {
+    if (!valor) {
+        return null;
+    }
+
+    if (typeof valor === 'string') {
+        var texto = valor.trim();
+
+        if (!texto || texto === 'binary') {
             return null;
         }
 
         try {
-            anexoTratado = JSON.parse(texto);
+            var objeto = JSON.parse(texto);
+            var serializado = serializarAnexo(objeto);
+
+            if (serializado) {
+                return serializado;
+            }
         } catch (e) {
-            return texto;
+            // Mantém o texto original quando não for JSON válido.
         }
+
+        return texto;
     }
 
-    if (!anexoTratado || typeof anexoTratado !== 'object') {
-        return anexoTratado;
-    }
-
-    function extrairValor(obj, chaves) {
-        for (var idx = 0; idx < chaves.length; idx++) {
-            var chave = chaves[idx];
-            if (obj.hasOwnProperty(chave)) {
-                var valor = obj[chave];
-                if (typeof valor === 'string' && valor.trim()) {
-                    if (chave === 'binary' && valor === 'binary') {
-                        continue;
-                    }
-                    return valor;
-                }
-            }
-        }
-
-        if (obj.file && typeof obj.file === 'object') {
-            return extrairValor(obj.file, chaves);
-        }
-
-        return null;
-    }
-
-    function propagarValor(obj, chaves, valor) {
-        if (!valor || valor === 'binary') {
-            return;
-        }
-
-        for (var idx = 0; idx < chaves.length; idx++) {
-            var chave = chaves[idx];
-            if (!obj.hasOwnProperty(chave) || !obj[chave] || obj[chave] === 'binary') {
-                obj[chave] = valor;
-            }
-        }
-    }
-
-    function atualizarCampo(obj, chaves, valor) {
-        if (!valor) {
-            return;
-        }
-
-        for (var idx = 0; idx < chaves.length; idx++) {
-            var chave = chaves[idx];
-            if (!obj.hasOwnProperty(chave) || !obj[chave] || obj[chave] === 'binary') {
-                obj[chave] = valor;
-            }
-        }
-    }
-
-    var conteudo = extrairValor(anexoTratado, ['base64', 'conteudo', 'content', 'valor', 'value', 'binary']);
-    if (conteudo) {
-        propagarValor(anexoTratado, ['binary', 'base64', 'conteudo', 'content', 'valor', 'value'], conteudo);
-
-        if (typeof anexoTratado.file === 'object') {
-            propagarValor(anexoTratado.file, ['binary', 'base64', 'conteudo', 'content', 'valor', 'value'], conteudo);
-        } else if (!anexoTratado.file || anexoTratado.file === 'binary') {
-            anexoTratado.file = { binary: conteudo };
-        }
-    }
-
-    var nome = extrairValor(anexoTratado, ['nomeArquivo', 'fileName', 'nome', 'name']);
-    if (nome) {
-        atualizarCampo(anexoTratado, ['nomeArquivo', 'fileName', 'nome', 'name'], nome);
-        if (typeof anexoTratado.file === 'object') {
-            atualizarCampo(anexoTratado.file, ['nomeArquivo', 'fileName', 'nome', 'name'], nome);
-        }
-    }
-
-    var tipo = extrairValor(anexoTratado, ['tipoConteudo', 'contentType', 'tipo', 'type']);
-    if (tipo) {
-        propagarValor(anexoTratado, ['tipoConteudo', 'contentType', 'tipo', 'type'], tipo);
-        if (typeof anexoTratado.file === 'object') {
-            propagarValor(anexoTratado.file, ['tipoConteudo', 'contentType', 'tipo', 'type'], tipo);
-        }
-    }
-
-    return anexoTratado;
+    return serializarAnexo(valor);
 }
 
 function aplicarAnexo(linha, campo, valor) {
-    var anexoFormatado = prepararAnexo(valor);
-    if (anexoFormatado) {
-        linha.setCampo(campo, anexoFormatado);
+    var anexoPreparado = prepararAnexo(valor);
+
+    if (anexoPreparado) {
+        linha.setCampo(campo, anexoPreparado);
     }
 }
