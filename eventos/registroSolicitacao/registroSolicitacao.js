@@ -39,15 +39,9 @@ if (!linhaExistente) {
     novaLinhaTabChamado.setCampo("IMPACTO", urgencia); // regra de negócio inicial: Impacto igual Urgência 
     novaLinhaTabChamado.setCampo("PRIORIDADE", 'M');
 
-    if (anexo1) {
-        novaLinhaTabChamado.setCampo("ANEXO1", anexo1);
-    }
-    if (anexo2) {
-        novaLinhaTabChamado.setCampo("ANEXO2", anexo2);
-    }
-    if (anexo3) {
-        novaLinhaTabChamado.setCampo("ANEXO3", anexo3);
-    }
+    aplicarAnexo(novaLinhaTabChamado, "ANEXO1", anexo1);
+    aplicarAnexo(novaLinhaTabChamado, "ANEXO2", anexo2);
+    aplicarAnexo(novaLinhaTabChamado, "ANEXO3", anexo3);
 
     novaLinhaTabChamado.setCampo("CICLO1", 'NA'); // regra de negócio inicial: CICLO1 inicial igual a NA 
     novaLinhaTabChamado.setCampo("CODUSUALTER", codUsu);
@@ -78,15 +72,9 @@ if (!linhaExistente) {
     tabChamado[c].setCampo("IMPACTO", urgencia); // regra de negócio inicial: Impacto igual Urgência 
     tabChamado[c].setCampo("PRIORIDADE", 'M');
 
-    if (anexo1) {
-        tabChamado[c].setCampo("ANEXO1", anexo1);
-    }
-    if (anexo2) {
-        tabChamado[c].setCampo("ANEXO2", anexo2);
-    }
-    if (anexo3) {
-        tabChamado[c].setCampo("ANEXO3", anexo3);
-    }
+    aplicarAnexo(tabChamado[c], "ANEXO1", anexo1);
+    aplicarAnexo(tabChamado[c], "ANEXO2", anexo2);
+    aplicarAnexo(tabChamado[c], "ANEXO3", anexo3);
 
     tabChamado[c].setCampo("CICLO1", 'NA'); // regra de negócio inicial: CICLO1 inicial igual a NA 
     tabChamado[c].setCampo("CODUSUALTER", codUsu);
@@ -104,4 +92,55 @@ if (!linhaExistente) {
 
     }
 
+}
+
+
+function prepararAnexo(anexo) {
+    if (!anexo) {
+        return null;
+    }
+
+    if (typeof anexo === 'string') {
+        try {
+            anexo = JSON.parse(anexo);
+        } catch (e) {
+            return {
+                file: anexo,
+                conteudo: anexo,
+                fileName: 'anexo',
+                nomeArquivo: 'anexo',
+                contentType: 'application/octet-stream',
+                tipoConteudo: 'application/octet-stream'
+            };
+        }
+    }
+
+    var conteudo = anexo.base64 || anexo.conteudo || anexo.content || anexo.file || anexo.valor || anexo.value || null;
+    var nome = anexo.nomeArquivo || anexo.nome || anexo.name || anexo.fileName || null;
+    var tipo = anexo.tipoConteudo || anexo.contentType || anexo.tipo || anexo.type || 'application/octet-stream';
+
+    if (!conteudo) {
+        return null;
+    }
+
+    if (!nome) {
+        nome = 'anexo';
+    }
+
+    return {
+        file: conteudo,
+        conteudo: conteudo,
+        value: conteudo,
+        fileName: nome,
+        nomeArquivo: nome,
+        contentType: tipo,
+        tipoConteudo: tipo
+    };
+}
+
+function aplicarAnexo(linha, campo, valor) {
+    var anexoFormatado = prepararAnexo(valor);
+    if (anexoFormatado) {
+        linha.setCampo(campo, anexoFormatado);
+    }
 }
