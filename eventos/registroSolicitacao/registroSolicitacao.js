@@ -99,8 +99,8 @@ if (!linhaExistente) {
     try {
         salvarCamposAlterados();
     } catch (e) {
-        console.error("Erro ao registrar a solicitação na tabela de chamados TI: ", e);
-        throw new Error("Erro ao <b>registrar a solicitação na tabela de chamados TI</b>! <br>" + e.message);
+        console.error("Erro ao atualizar a solicitação na tabela de chamados TI: ", e);
+        throw new Error("Erro ao <b>atualizar a solicitação na tabela de chamados TI</b>! <br>" + e.message);
 
     }
 
