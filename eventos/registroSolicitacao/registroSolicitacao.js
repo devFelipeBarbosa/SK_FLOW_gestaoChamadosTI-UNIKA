@@ -110,8 +110,9 @@ if (!linhaExistente) {
 // A partir desse ponto trataremos os dispositivos vinculados ao chamado TI
 var listaDispositivosAtuais = listarDispositivosUsuario(codUsu) || null; // Lista de dispositivos atuais do usuário em uso (U) ou em manutenção (M), TABELA AD_CADDISPOSITIVOSTI
 var temDispositivoVinculado = false; // Boleano para verificar se já existe dispositivo vinculado ao chamado TI
+var listaDispositivosChamado = buscarDado("ID_PK", "AD_EQUIPDISPCHAMADO", "IDINSTPRN= :IDINSTPRN", [solicitacao]) || null; // busca ao menos um dipositivo vinculado ao chamado TI
 
-if (tabDispositivos.length > 0) {
+if (listaDispositivosChamado !== null) {
     temDispositivoVinculado = true;
 }
 
