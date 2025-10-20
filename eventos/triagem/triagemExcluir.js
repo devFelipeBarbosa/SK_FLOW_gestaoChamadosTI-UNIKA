@@ -1,0 +1,1 @@
+throw new Error("<br>Não é possível <b>excluir<b/> a solicitação em aberto, realize a destinação adequada!");

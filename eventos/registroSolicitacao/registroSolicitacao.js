@@ -13,7 +13,7 @@ var categoria = getCampo("CATEGORIA") || Number(0);
 var urgencia = getCampo("URGENCIA") || Number(0);
 var titulo = getCampo("TITULO") || '';
 var descricao = getCampo("TEXTOCHAMADO") || '';
-var anexo1 = buscarDado("TEXTOLONGO", "TWFIVAR", "IDINSTPRN= :IDINSTPRN AND NOME= 'ANEXO1'", [solicitacao]);
+var anexo1 = getCampo("ANEXO1");
 var anexo2 = getCampo("ANEXO2");
 var anexo3 = getCampo("ANEXO3");
 
@@ -29,6 +29,7 @@ for (var i = 0; i < tabChamado.length; i++) {
 
 if (!linhaExistente) {
     var novaLinhaTabChamado = novaLinhaFormulario("AD_CHAMADOTI");
+    novaLinhaTabChamado.setCampo("IDTAREFA", 'UserTask_0j1hb5e');
     novaLinhaTabChamado.setCampo("CODUSU", codUsu);
     novaLinhaTabChamado.setCampo("TIPO", tipo);
     novaLinhaTabChamado.setCampo("ID_CATEGORIATI", categoria);
@@ -112,18 +113,18 @@ var listaDispositivosAtuais = listarDispositivosUsuario(codUsu) || null; // List
 var temDispositivoVinculado = false; // Boleano para verificar se já existe dispositivo vinculado ao chamado TI
 var listaDispositivosChamado = buscarDado("ID_PK", "AD_EQUIPDISPCHAMADO", "IDINSTPRN= :IDINSTPRN", [solicitacao]) || null; // busca ao menos um dipositivo vinculado ao chamado TI
 
-if (listaDispositivosChamado !== null) {
+if (listaDispositivosChamado != null) {
     temDispositivoVinculado = true;
 }
 
-if (!temDispositivoVinculado && listaDispositivosAtuais !== null) {
+if (!temDispositivoVinculado && listaDispositivosAtuais != null) {
 
     // Percorre a lista de dispositivos atuais do usuário
     for (var j = 0; j < listaDispositivosAtuais.length; j++) {
 
         var novaLinhaDispositivoChamado = novaLinhaFormulario("AD_EQUIPDISPCHAMADO");
         novaLinhaDispositivoChamado.setCampo("CODREGISTRO", 1);
-        novaLinhaDispositivoChamado.setCampo("IDTAREFA", 'UserTask_1btj31b');
+        novaLinhaDispositivoChamado.setCampo("IDTAREFA", 'UserTask_0j1hb5e');
         novaLinhaDispositivoChamado.setCampo("ID_PK", listaDispositivosAtuais[j].ID_PK);
 
         try {
