@@ -1,7 +1,8 @@
 // Registro da Solicitação - na tabela AD_CHAMADOTI (INICIALIZACÃO) 
 var solicitacao = getIdInstanceProcesso(); // ID da Solicitação 
 var codUsu = getUsuarioInclusao(); // ID do Usuário Solicitante 
-var tabChamado = getLinhasFormulario("AD_CHAMADOTI"); // Retorna as linhas Tabela de Chamados TI 
+var tabChamado = getLinhasFormulario("AD_CHAMADOTI"); // Retorna as linhas Tabela de Chamados TI (AD_CHAMADOTI)
+var tabDispositivos = getLinhasFormulario("AD_EQUIPDISPCHAMADO"); // Retorna as linhas Tabela de Dispositivos (AD_EQUIPDISPCHAMADO)
 var linhaExistente = false; // Boleano para verificar existência de chamado TI para a solicitação 
 var c = null; // contador genérico para encontrar linha cadastro do Formulário
 
@@ -15,6 +16,7 @@ var descricao = getCampo("TEXTOCHAMADO") || '';
 var anexo1 = buscarDado("TEXTOLONGO", "TWFIVAR", "IDINSTPRN= :IDINSTPRN AND NOME= 'ANEXO1'", [solicitacao]);
 var anexo2 = getCampo("ANEXO2");
 var anexo3 = getCampo("ANEXO3");
+
 
 // Verifica se já existe uma linha na tabela de chamados TI para a solicitação atual 
 for (var i = 0; i < tabChamado.length; i++) {
@@ -103,4 +105,52 @@ if (!linhaExistente) {
         throw new Error("Erro ao <b>atualizar a solicitação na tabela de chamados TI</b>! <br>" + e.message);
 
     }
+}
+
+// A partir desse ponto trataremos os dispositivos vinculados ao chamado TI
+var listaDispositivosAtuais = listarDispositivosUsuario(codUsu) || null; // Lista de dispositivos atuais do usuário em uso (U) ou em manutenção (M), TABELA AD_CADDISPOSITIVOSTI
+var temDispositivoVinculado = false; // Boleano para verificar se já existe dispositivo vinculado ao chamado TI
+
+if (tabDispositivos.length > 0) {
+    temDispositivoVinculado = true;
+}
+
+if (!temDispositivoVinculado && listaDispositivosAtuais !== null) {
+
+    // Percorre a lista de dispositivos atuais do usuário
+    for (var j = 0; j < listaDispositivosAtuais.length; j++) {
+
+        var novaLinhaDispositivoChamado = novaLinhaFormulario("AD_EQUIPDISPCHAMADO");
+        novaLinhaDispositivoChamado.setCampo("CODREGISTRO", 1);
+        novaLinhaDispositivoChamado.setCampo("IDTAREFA", 'UserTask_1btj31b');
+        novaLinhaDispositivoChamado.setCampo("ID_PK", listaDispositivosAtuais[j].ID_PK);
+
+        try {
+            novaLinhaDispositivoChamado.save();
+        } catch (e) {
+            console.error("Erro ao vincular dispositivo ao chamado TI: ", e);
+            throw new Error("Erro ao <b>vincular dispositivo ao chamado TI</b>! <br>" + e.message);
+        }
+    }
+}
+
+function listarDispositivosUsuario(codUsu) {
+
+    var listaAtual = [];
+    var listaQuery = getQuery();
+    listaQuery.setParam("CODUSU", codUsu);
+    listaQuery.nativeSelect("SELECT ID_PK FROM AD_CADDISPOSITIVOSTI WHERE CODUSU = {CODUSU} AND STATUSUSO IN ('U','M')");
+   
+    try {
+        while (listaQuery.next()) {
+            var dispositivo = parseInt(listaQuery.getString("ID_PK"));
+            listaAtual.push({"ID_PK": dispositivo});
+        }
+    } catch (e) {
+        console.error("Erro ao executar a função listarDispositivosUsuario: ", e);
+        throw new Error("Erro ao <b>executar a função listarDispositivosUsuario</b>! <br>" + e.message);
+
+    }
+
+    return listaAtual.length > 0 ? listaAtual : null;
 }
