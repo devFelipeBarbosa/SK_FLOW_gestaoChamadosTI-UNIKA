@@ -19,11 +19,11 @@ if (linhaExistente) {
     var statusCiclo1 = linhaChamado.getCampo("CICLO1");
 
     if (statusCiclo1 == 'NA') {
-        throw new Error("<br>O chamado está <b>aguardando definição</b>!");
+        throw new Error("O chamado está <b>aguardando definição</b>!");
     }
 
     if ((statusCiclo1 == 'N' || statusCiclo1 == 'A') && (!linhaChamado.getCampo("JUSTIFICATIVA") || linhaChamado.getCampo("JUSTIFICATIVA") == null || linhaChamado.getCampo("JUSTIFICATIVA").trim() == '')) {
-        throw new Error("<br>É obrigatório informar a <b>justificativa</b> para encaminhar o chamado!");
+        throw new Error("É obrigatório informar a <b>justificativa</b> para encaminhar o chamado!");
     }
 } else {
     throw new Error("Erro crítico: Registro principal do chamado não encontrado.");
@@ -55,7 +55,7 @@ for (var j = 0; j < tabAgentesChamado.length; j++) {
         emailUsuarioAtual = buscarDado("EMAIL", "TSIUSU", "CODUSU = :CODUSU", [codUsuAgente]);
 
         if (emailUsuarioAtual == null || emailUsuarioAtual.trim() == '') {
-            throw new Error("<br>O observador <b>[" + codUsuAgente + "]</b> não possui e-mail cadastrado!");
+            throw new Error("O observador <b>[" + codUsuAgente + "]</b> não possui e-mail cadastrado!");
         } else {
 
             var emails = emailUsuarioAtual.split(",");
