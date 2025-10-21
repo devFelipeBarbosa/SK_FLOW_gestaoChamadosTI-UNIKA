@@ -1,37 +1,8 @@
-// Candidato Dinâmico - Em Atendimento (Formato Padrão)
+// Candidato Dinamico para atividade "Em Atendimento" na tela de Chamados TI
 var solicitacao = getIdInstanceProcesso();
-var tabAgentesChamado = getLinhasFormulario("AD_AGENTESCHAMADO");
 
-var listaCandidatos = [];
-var listaDonos = [];      
-var k = 0;
-while (k < tabAgentesChamado.length) {
+var query = "SELECT CODUSU AS COLUNA, 'U' AS TIPO FROM AD_AGENTESCHAMADO WHERE IDINSTPRN = :IDINSTPRN AND TIPOATRIBUICAO IN ('D','C')";
 
-    if (tabAgentesChamado[k].getCampo("IDINSTPRN") == solicitacao) {
-
-        var tipoAtribuicao = tabAgentesChamado[k].getCampo("TIPOATRIBUICAO");
-        var codUsuAgente = tabAgentesChamado[k].getCampo("CODUSU");
-        
-        // Cria o objeto no formato esperado pelo Flow
-        var responsavelObj = {
-            COLUNA: codUsuAgente,
-            TIPO: 'U' 
-        };
-
-        if (tipoAtribuicao == 'C') {
-            listaCandidatos.push(responsavelObj);
-        }
-
-        if (tipoAtribuicao == 'D') {
-            listaDonos.push(responsavelObj); 
-        }
-    }
-    k++;
-}
+return getLista(query, [solicitacao]);
 
 
-if (listaDonos.length > 0) {
-    return listaDonos; 
-} else {
-    return listaCandidatos; 
-}
