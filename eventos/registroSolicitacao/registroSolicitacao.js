@@ -59,6 +59,9 @@ if (!linhaExistente) {
     novaLinhaTabChamado.setCampo("CICLO2", 'N'); // CICLO2 regra do negócio: igual a N no inicio 
     novaLinhaTabChamado.setCampo("CICLO3", 'NA'); // CICLO3 regra do negócio: igual a NA no inicio CLICO3 
     novaLinhaTabChamado.setCampo("AVALIACAO", '0'); // AVALIACAO regra do negócio: igual a 0 (texto) no inicio 
+    novaLinhaTabChamado.setCampo("TODOSDISP", 'N'); // Configuração da Solução para utilizar todos os dispositivos do chamado: N (Não)
+    novaLinhaTabChamado.setCampo("USADISPOSITIVO", 'N'); // USADISPOSITIVO regra do negócio: igual a N no inicio USADISPOSITIVO
+
 
     try {
         novaLinhaTabChamado.save();
@@ -97,7 +100,9 @@ if (!linhaExistente) {
     tabChamado[c].setCampo("STATUSTERCEIRO", 'NA'); // STATUSTERCEIRO regra do negócio: igual a NA no inicio 
     tabChamado[c].setCampo("CICLO2", 'N'); // CICLO2 regra do negócio: igual a N no inicio 
     tabChamado[c].setCampo("CICLO3", 'NA'); // CICLO3 regra do negócio: igual a NA no inicio CLICO3 
-    tabChamado[c].setCampo("AVALIACAO", 0); // AVALIACAO regra do negócio: igual a 0 (texto) no inicio     
+    tabChamado[c].setCampo("AVALIACAO", 0); // AVALIACAO regra do negócio: igual a 0 (texto) no inicio
+    tabChamado[c].setCampo("TODOSDISP", 'N'); // Configuração da Solução para utilizar todos os dispositivos do chamado: N (Não)
+    tabChamado[c].setCampo("USADISPOSITIVO", 'N'); // USADISPOSITIVO regra do negócio: igual a N no inicio USADISPOSITIVO     
 
     try {
         salvarCamposAlterados();
@@ -142,11 +147,11 @@ function listarDispositivosUsuario(codUsu) {
     var listaQuery = getQuery();
     listaQuery.setParam("CODUSU", codUsu);
     listaQuery.nativeSelect("SELECT ID_PK FROM AD_CADDISPOSITIVOSTI WHERE CODUSU = {CODUSU} AND STATUSUSO IN ('U','M')");
-   
+
     try {
         while (listaQuery.next()) {
             var dispositivo = parseInt(listaQuery.getString("ID_PK"));
-            listaAtual.push({"ID_PK": dispositivo});
+            listaAtual.push({ "ID_PK": dispositivo });
         }
     } catch (e) {
         console.error("Erro ao executar a função listarDispositivosUsuario: ", e);
