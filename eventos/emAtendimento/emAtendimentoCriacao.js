@@ -18,7 +18,7 @@ if (linhaExistente) {
     tabChamado[c].setCampo("CODUSUALTER", codUsu);
     tabChamado[c].setCampo("IDTAREFA", 'UserTask_1dsyzbu');
 
-    tabChamado[c].setCampo("STATUSCHAMADO", 'E'); // Atualiza o status do chamado TI para 'A' - Novo quando desatribuído a tarefa
+    tabChamado[c].setCampo("STATUSCHAMADO", 'E'); // Atualiza o status do chamado TI para 'E' - Novo quando desatribuído a tarefa
 
     try {
         salvarCamposAlterados();
