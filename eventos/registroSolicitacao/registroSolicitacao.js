@@ -159,5 +159,7 @@ function listarDispositivosUsuario(codUsu) {
 
     }
 
+    listaQuery.close();
+
     return listaAtual.length > 0 ? listaAtual : null;
 }

@@ -12,7 +12,7 @@ for (var i = 0; i < tabChamado.length; i++) {
         c = i;
         break;
     }
-}
+}   
 
 if (linhaExistente) {
     tabChamado[c].setCampo("CODUSUALTER", codUsu);
