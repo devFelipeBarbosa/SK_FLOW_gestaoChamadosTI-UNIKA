@@ -2,8 +2,8 @@
 var solicitacao = getIdInstanceProcesso(); // ID da Solicitação 
 var codUsu = getUsuarioInclusao(); // ID do Usuário Solicitante 
 var tabChamado = getLinhasFormulario("AD_CHAMADOTI"); // Retorna as linhas Tabela de Chamados TI (AD_CHAMADOTI)
-var linhaExistente = false; // Boleano para verificar existência de chamado TI para a solicitação 
-var c = null; // tabela genérica para salvar o objeto da linha da tabela AD_CHAMADOTI, contador genérico para encontrar linha cadastro do Formulário
+var linhaExistente = false;
+var c = null;
 
 // Verifica se já existe uma linha na tabela de chamados TI para a solicitação atual 
 for (var i = 0; i < tabChamado.length; i++) {
@@ -32,27 +32,16 @@ if (linhaExistente) {
 //aqui eu preciso pegar a ultima linha da tabela AD_HISTORICOSOLUCOES para comparar com a linha c da tabela AD_CHAMADOTI
 var tabHistoricoSoluceos = getLinhasFormulario("AD_HISTORICOSOLUCOES"); // Retorna as linhas Tabela de Histórico de Soluções (AD_HISTORICOSOLUCOES)
 var s = tabHistoricoSoluceos[tabHistoricoSoluceos.length - 1]; // ultima linha da tabela AD_HISTORICOSOLUCOES
-var descSolucaoAnterior = "Sem informações";
+var descSolucaoAnterior = null;
 
-if (s >= 0) {
+if ((tabHistoricoSoluceos.length - 1) >= 0) {
     descSolucaoAnterior = s.getCampo("DESCSOLUCAO");
 }
 
-if (salvaHistorico == "S" && descSolucao != descSolucaoAnterior) {
-    var novaSolucao = novaLinhaFormulario("AD_HISTORICOSOLUCOES");
-    novaSolucao.setCampo("CODREGISTRO", 1);
-    novaSolucao.setCampo("IDTAREFA", "UserTask_1dsyzbu");
-    novaSolucao.setCampo("TIPO", tipo);
-    novaSolucao.setCampo("ID_CATEGORIATI", categoria);
-    novaSolucao.setCampo("CODLOCAL", codLocal);
-    novaSolucao.setCampo("DESCSOLUCAO", descSolucao);
-    novaSolucao.setCampo("ID_PK", idCadastro);
-    novaSolucao.setCampo("CODPROD", codProd);
-    novaSolucao.setCampo("TERCEIRO", terceiro);
-    novaSolucao.setCampo("DTTERCEIRO", dtTerceiro);
-    novaSolucao.setCampo("CODPARC", codParc);
-    novaSolucao.setCampo("DESCTERCEIRO", descTerceiro);
+if (salvaHistorico == "S" && descSolucao != descSolucaoAnterior) { // Cria uma nova linha na tabela AD_HISTORICOSOLUCOES
 
+    var novaSolucao = novaLinhaFormulario("AD_HISTORICOSOLUCOES");
+    setaCampos(novaSolucao, tipo, categoria, codLocal, descSolucao, idCadastro, codProd, terceiro, dtTerceiro, codParc, descTerceiro);
     try {
         novaSolucao.save();
     } catch (e) {
@@ -60,32 +49,27 @@ if (salvaHistorico == "S" && descSolucao != descSolucaoAnterior) {
         throw new Error("Erro ao <b>CRIAR a solução TI</b>! <br>" + e.message);
     }
 
-} else if (salvaHistorico == "S" && (s >= 0) && descSolucao == descSolucaoAnterior) {
-    s.setCampo("CODREGISTRO", 1);
-    s.setCampo("IDTAREFA", "UserTask_1dsyzbu");
-    s.setCampo("TIPO", tipo);
-    s.setCampo("ID_CATEGORIATI", categoria);
-    s.setCampo("CODLOCAL", codLocal);
-    s.setCampo("ID_PK", idCadastro);
-    s.setCampo("CODPROD", codProd);
-    s.setCampo("TERCEIRO", terceiro);
-    s.setCampo("DTTERCEIRO", dtTerceiro);
-    s.setCampo("CODPARC", codParc);
-    s.setCampo("DESCTERCEIRO", descTerceiro);
-
+} else if (salvaHistorico == "S" && (tabHistoricoSoluceos.length - 1) >= 0 && descSolucao == descSolucaoAnterior) { // Não cria uma nova linha na tabela AD_HISTORICOSOLUCOES, update
+    
+    setaCampos(s, tipo, categoria, codLocal, descSolucao, idCadastro, codProd, terceiro, dtTerceiro, codParc, descTerceiro);
     try {
         salvarCamposAlterados();
     } catch (e) {
         console.error("Erro ao ALTERAR a solução TI: ", e);
         throw new Error("Erro ao <b>ALTERAR a solução TI</b>! <br>" + e.message);
     }
-
-}
-
-
-try {
-    salvarCamposAlterados();
-} catch (e) {
-    console.error("Erro ao ALTERAR a solução TI: ", e);
-    throw new Error("Erro ao <b>ALTERAR a solução TI</b>! <br>" + e.message);
+} 
+function setaCampos(solucao, tipo, categoria, codLocal, descSolucao, idCadastro, codProd, terceiro, dtTerceiro, codParc, descTerceiro) {
+    solucao.setCampo("CODREGISTRO", 1);
+    solucao.setCampo("IDTAREFA", "UserTask_1dsyzbu");
+    solucao.setCampo("TIPO", tipo);
+    solucao.setCampo("ID_CATEGORIATI", categoria);
+    solucao.setCampo("CODLOCAL", codLocal);
+    solucao.setCampo("DESCSOLUCAO", descSolucao);
+    solucao.setCampo("ID_PK", idCadastro);
+    solucao.setCampo("CODPROD", codProd);
+    solucao.setCampo("TERCEIRO", terceiro);
+    solucao.setCampo("DTTERCEIRO", dtTerceiro);
+    solucao.setCampo("CODPARC", codParc);
+    solucao.setCampo("DESCTERCEIRO", descTerceiro);
 }

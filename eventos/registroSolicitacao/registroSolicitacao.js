@@ -59,7 +59,6 @@ if (!linhaExistente) {
     novaLinhaTabChamado.setCampo("CICLO2", 'N'); // CICLO2 regra do negócio: igual a N no inicio 
     novaLinhaTabChamado.setCampo("CICLO3", 'NA'); // CICLO3 regra do negócio: igual a NA no inicio CLICO3 
     novaLinhaTabChamado.setCampo("AVALIACAO", '0'); // AVALIACAO regra do negócio: igual a 0 (texto) no inicio 
-    novaLinhaTabChamado.setCampo("TODOSDISP", 'N'); // Configuração da Solução para utilizar todos os dispositivos do chamado: N (Não)
     novaLinhaTabChamado.setCampo("USADISPOSITIVO", 'N'); // USADISPOSITIVO regra do negócio: igual a N no inicio USADISPOSITIVO
     novaLinhaTabChamado.setCampo("SALVASOLUCAO", 'S');
 
@@ -102,7 +101,6 @@ if (!linhaExistente) {
     tabChamado[c].setCampo("CICLO2", 'N'); // CICLO2 regra do negócio: igual a N no inicio 
     tabChamado[c].setCampo("CICLO3", 'NA'); // CICLO3 regra do negócio: igual a NA no inicio CLICO3 
     tabChamado[c].setCampo("AVALIACAO", 0); // AVALIACAO regra do negócio: igual a 0 (texto) no inicio
-    tabChamado[c].setCampo("TODOSDISP", 'N'); // Configuração da Solução para utilizar todos os dispositivos do chamado: N (Não)
     tabChamado[c].setCampo("USADISPOSITIVO", 'N'); // USADISPOSITIVO regra do negócio: igual a N no inicio USADISPOSITIVO    
     tabChamado[c].setCampo("SALVASOLUCAO", 'S');
 
