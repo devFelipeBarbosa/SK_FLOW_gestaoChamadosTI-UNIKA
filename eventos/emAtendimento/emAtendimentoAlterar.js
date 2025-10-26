@@ -19,21 +19,29 @@ if (linhaExistente) {
     var tipo = c.getCampo("TIPO");
     var categoria = c.getCampo("ID_CATEGORIATI");
     var codLocal = c.getCampo("CODLOCAL");
-    var descSolucao = c.getCampo("DESCSOLUCAO");
+    var descSolucao = c.getCampo("DESCSOLUCAO") || null;
     var idCadastro = c.getCampo("ID_PK");
     var codProd = c.getCampo("CODPROD");
     var terceiro = c.getCampo("TERCEIRO");
     var dtTerceiro = c.getCampo("DTTERCEIRO");
     var codParc = c.getCampo("CODPARC");
     var descTerceiro = c.getCampo("DESCTERCEIRO");
+    var salvaHistorico = c.getCampo("SALVASOLUCAO") || "S";
 }
 
 //aqui eu preciso pegar a ultima linha da tabela AD_HISTORICOSOLUCOES para comparar com a linha c da tabela AD_CHAMADOTI
 var tabHistoricoSoluceos = getLinhasFormulario("AD_HISTORICOSOLUCOES"); // Retorna as linhas Tabela de Histórico de Soluções (AD_HISTORICOSOLUCOES)
 var s = tabHistoricoSoluceos[tabHistoricoSoluceos.length - 1]; // ultima linha da tabela AD_HISTORICOSOLUCOES
+var descSolucaoAnterior = "Sem informações";
 
-if (s == null || s == undefined) {
+if (s >= 0) {
+    descSolucaoAnterior = s.getCampo("DESCSOLUCAO");
+}
+
+if (salvaHistorico == "S" && descSolucao != descSolucaoAnterior) {
     var novaSolucao = novaLinhaFormulario("AD_HISTORICOSOLUCOES");
+    novaSolucao.setCampo("CODREGISTRO", 1);
+    novaSolucao.setCampo("IDTAREFA", "UserTask_1dsyzbu");
     novaSolucao.setCampo("TIPO", tipo);
     novaSolucao.setCampo("ID_CATEGORIATI", categoria);
     novaSolucao.setCampo("CODLOCAL", codLocal);
@@ -48,39 +56,36 @@ if (s == null || s == undefined) {
     try {
         novaSolucao.save();
     } catch (e) {
-        console.error("Erro ao CRIAR o chamado TI: ", e);
-        throw new Error("Erro ao <b>CRIAR o chamado TI</b>! <br>" + e.message);
+        console.error("Erro ao CRIAR a solução TI: ", e);
+        throw new Error("Erro ao <b>CRIAR a solução TI</b>! <br>" + e.message);
     }
 
-} else {
+} else if (salvaHistorico == "S" && (s >= 0) && descSolucao == descSolucaoAnterior) {
+    s.setCampo("CODREGISTRO", 1);
+    s.setCampo("IDTAREFA", "UserTask_1dsyzbu");
+    s.setCampo("TIPO", tipo);
+    s.setCampo("ID_CATEGORIATI", categoria);
+    s.setCampo("CODLOCAL", codLocal);
+    s.setCampo("ID_PK", idCadastro);
+    s.setCampo("CODPROD", codProd);
+    s.setCampo("TERCEIRO", terceiro);
+    s.setCampo("DTTERCEIRO", dtTerceiro);
+    s.setCampo("CODPARC", codParc);
+    s.setCampo("DESCTERCEIRO", descTerceiro);
 
-    var descSolucaoAnterior = s.getCampo("DESCSOLUCAO");
-    var idCadastroAnterior = s.getCampo("ID_PK");
-    var codProdAnterior = s.getCampo("CODPROD");
-    var terceiroAnterior = s.getCampo("TERCEIRO");
-    var dtTerceiroAnterior = s.getCampo("DTTERCEIRO");
-    var codParcAnterior = s.getCampo("CODPARC");
-    var descTerceiroAnterior = s.getCampo("DESCTERCEIRO");
-
-    if(descSolucao != descSolucaoAnterior || idCadastro != idCadastroAnterior || codProd != codProdAnterior || terceiro != terceiroAnterior || dtTerceiro != dtTerceiroAnterior || codParc != codParcAnterior || descTerceiro != descTerceiroAnterior){
-
-        var novaSolucao = novaLinhaFormulario("AD_HISTORICOSOLUCOES");
-        novaSolucao.setCampo("TIPO", tipo);
-        novaSolucao.setCampo("ID_CATEGORIATI", categoria);
-        novaSolucao.setCampo("CODLOCAL", codLocal);
-        novaSolucao.setCampo("DESCSOLUCAO", descSolucao);
-        novaSolucao.setCampo("ID_PK", idCadastro);
-        novaSolucao.setCampo("CODPROD", codProd);
-        novaSolucao.setCampo("TERCEIRO", terceiro);
-        novaSolucao.setCampo("DTTERCEIRO", dtTerceiro);
-        novaSolucao.setCampo("CODPARC", codParc);
-        novaSolucao.setCampo("DESCTERCEIRO", descTerceiro);
-
-        try {
-            novaSolucao.save();
-        } catch (e) {
-            console.error("Erro ao CRIAR o chamado TI: ", e);
-            throw new Error("Erro ao <b>CRIAR o chamado TI</b>! <br>" + e.message);
-        }
+    try {
+        salvarCamposAlterados();
+    } catch (e) {
+        console.error("Erro ao ALTERAR a solução TI: ", e);
+        throw new Error("Erro ao <b>ALTERAR a solução TI</b>! <br>" + e.message);
     }
+
+}
+
+
+try {
+    salvarCamposAlterados();
+} catch (e) {
+    console.error("Erro ao ALTERAR a solução TI: ", e);
+    throw new Error("Erro ao <b>ALTERAR a solução TI</b>! <br>" + e.message);
 }
