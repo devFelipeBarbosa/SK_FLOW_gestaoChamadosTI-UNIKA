@@ -1,4 +1,4 @@
-// Evento Finalizar: Em Atendimento
+// Evento Finalizar: Aguardando Terceiro Compra
 var sid = getIdInstanceProcesso(), tC = getLinhasFormulario("AD_CHAMADOTI"), c = null, has = false, i;
 
 for (i = 0; i < tC.length; i++) {
@@ -42,6 +42,12 @@ if (has) {
 
     if (ci2 = 'N' && jcaRaw != null) {
         c.setCampo('JUSTIFICATIVACANC', null);
+    }
+
+    var sdt = c.getCampo("STATUSTERCEIRO") || null;
+
+    if (sdt != 'F' || sdt != 'NA' || sdt == null) {
+        throw new Error("Há uma incosistência no <b>Status</b> do Terceiro! Não é permitido finalizar com status nulo ou considerados em <b>andamento/aguardando</b>!");
     }
 }
 
