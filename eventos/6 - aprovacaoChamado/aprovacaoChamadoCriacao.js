@@ -16,6 +16,6 @@ for (var i = 0; i < tabChamado.length; i++) {
 
 if (linhaExistente) {
     tabChamado[c].setCampo("CODUSUALTER", codUsu);
-    tabChamado[c].setCampo("IDTAREFA", 'UserTask_0d26b2m');
-    tabChamado[c].setCampo("STATUSCHAMADO", 'F'); // Atualiza o status do chamado TI para 'E' - Novo quando desatribuído a tarefa
+    tabChamado[c].setCampo("IDTAREFA", 'UserTask_0jnfn7w');
+    tabChamado[c].setCampo("STATUSCHAMADO", 'F');
 }
