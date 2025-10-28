@@ -44,10 +44,10 @@ if (has) {
         c.setCampo('JUSTIFICATIVACANC', null);
     }
 
-    var sdt = c.getCampo("STATUSTERCEIRO") || null;
+    var sdt = c.getCampo("STATUSTERCEIRO");
 
-    if (sdt != 'F' || sdt != 'NA' || sdt == null) {
-        throw new Error("Há uma incosistência no <b>Status</b> do Terceiro! Não é permitido finalizar com status nulo ou considerados em <b>andamento/aguardando</b>!");
+    if (sdt == 'C' || sdt == 'S' || sdt == 'I') {
+        throw new Error("Há uma incosistência no <b>Status</b> do Terceiro! Não é permitido finalizar com status nulo ou considerados <b>em andamento/aguardando</b>!");
     }
 }
 

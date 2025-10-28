@@ -13,10 +13,11 @@ if(has){
       parc=c.getCampo("CODPARC"),
       dter=c.getCampo("DESCTERCEIRO"),
       sh=c.getCampo("SALVASOLUCAO")||"S";
+      bas=c.getCampo("BASECONHECIMENTO")||"S";
 }
 var th=getLinhasFormulario("AD_HISTORICOSOLUCOES"),s=null,ant=null;
 if(th.length) s=th[th.length-1],ant=s.getCampo("DESCSOLUCAO");
-function setCampos(r){r.setCampo("CODREGISTRO",1);r.setCampo("IDTAREFA","UserTask_1dsyzbu");r.setCampo("TIPO",tipo);r.setCampo("ID_CATEGORIATI",cat);r.setCampo("CODLOCAL",loc);r.setCampo("DESCSOLUCAO",dsc);r.setCampo("ID_PK",idc);r.setCampo("CODPROD",prd);r.setCampo("TERCEIRO",terc);r.setCampo("DTTERCEIRO",dtt);r.setCampo("CODPARC",parc);r.setCampo("DESCTERCEIRO",dter)}
+function setCampos(r){r.setCampo("CODREGISTRO",1);r.setCampo("IDTAREFA","UserTask_1dsyzbu");r.setCampo("TIPO",tipo);r.setCampo("ID_CATEGORIATI",cat);r.setCampo("CODLOCAL",loc);r.setCampo("DESCSOLUCAO",dsc);r.setCampo("ID_PK",idc);r.setCampo("CODPROD",prd);r.setCampo("TERCEIRO",terc);r.setCampo("DTTERCEIRO",dtt);r.setCampo("CODPARC",parc);r.setCampo("DESCTERCEIRO",dter);r.setCampo("BASECONHECIMENTO",bas)}
 if(sh=="S"&&dsc!=ant){
   var ns=novaLinhaFormulario("AD_HISTORICOSOLUCOES");setCampos(ns);
   try{ns.save()}catch(e){console.error("Erro ao CRIAR a solução TI: ",e);throw new Error("Erro ao <b>CRIAR a solução TI</b>! <br>"+e.message)}

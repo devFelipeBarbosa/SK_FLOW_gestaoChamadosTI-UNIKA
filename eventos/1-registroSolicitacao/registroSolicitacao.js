@@ -61,6 +61,7 @@ if (!linhaExistente) {
     novaLinhaTabChamado.setCampo("AVALIACAO", '0'); // AVALIACAO regra do negócio: igual a 0 (texto) no inicio 
     novaLinhaTabChamado.setCampo("USADISPOSITIVO", 'N'); // USADISPOSITIVO regra do negócio: igual a N no inicio USADISPOSITIVO
     novaLinhaTabChamado.setCampo("SALVASOLUCAO", 'S');
+    novaLinhaTabChamado.setCampo("BASECONHECIMENTO", 'S');
 
 
     try {
@@ -103,6 +104,7 @@ if (!linhaExistente) {
     tabChamado[c].setCampo("AVALIACAO", 0); // AVALIACAO regra do negócio: igual a 0 (texto) no inicio
     tabChamado[c].setCampo("USADISPOSITIVO", 'N'); // USADISPOSITIVO regra do negócio: igual a N no inicio USADISPOSITIVO    
     tabChamado[c].setCampo("SALVASOLUCAO", 'S');
+    tabChamado[c].setCampo("BASECONHECIMENTO", 'S');
 
     try {
         salvarCamposAlterados();
