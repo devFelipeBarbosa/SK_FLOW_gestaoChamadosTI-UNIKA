@@ -18,4 +18,5 @@ if (linhaExistente) {
     tabChamado[c].setCampo("CODUSUALTER", codUsu);
     tabChamado[c].setCampo("IDTAREFA", 'UserTask_0jnfn7w');
     tabChamado[c].setCampo("STATUSCHAMADO", 'F');
+    tabChamado[c].setCampo("BLOQ_EXC_HIST", 'S'); // BLOQ_EXC_HIST
 }

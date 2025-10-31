@@ -62,6 +62,7 @@ if (!linhaExistente) {
     novaLinhaTabChamado.setCampo("USADISPOSITIVO", 'N'); // USADISPOSITIVO regra do negócio: igual a N no inicio USADISPOSITIVO
     novaLinhaTabChamado.setCampo("SALVASOLUCAO", 'S');
     novaLinhaTabChamado.setCampo("BASECONHECIMENTO", 'S');
+    novaLinhaTabChamado.setCampo("BLOQ_EXC_HIST", 'N'); // BLOQ_EXC_HIST regra do negócio: igual a N no inicio
 
 
     try {
@@ -105,6 +106,7 @@ if (!linhaExistente) {
     tabChamado[c].setCampo("USADISPOSITIVO", 'N'); // USADISPOSITIVO regra do negócio: igual a N no inicio USADISPOSITIVO    
     tabChamado[c].setCampo("SALVASOLUCAO", 'S');
     tabChamado[c].setCampo("BASECONHECIMENTO", 'S');
+    tabChamado[c].setCampo("BLOQ_EXC_HIST", 'N'); // BLOQ_EXC_HIST regra do negócio: igual a N no inicio
 
     try {
         salvarCamposAlterados();

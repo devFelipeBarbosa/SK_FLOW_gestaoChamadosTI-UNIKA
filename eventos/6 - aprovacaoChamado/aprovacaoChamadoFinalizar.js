@@ -75,7 +75,7 @@ if (has) {
 
         setCampo("CORPOEMAIL", textoEmail);
 
-        c.setCampo("STATUSCHAMADO", 'K'); 
+        c.setCampo("STATUSCHAMADO", 'K');
 
         try {
             salvarCamposAlterados();
