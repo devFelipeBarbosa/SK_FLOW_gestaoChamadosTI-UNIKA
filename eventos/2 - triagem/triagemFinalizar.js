@@ -54,7 +54,7 @@ for (var j = 0; j < tabAgentesChamado.length; j++) {
 
         emailUsuarioAtual = buscarDado("EMAIL", "TSIUSU", "CODUSU = :CODUSU", [codUsuAgente]);
 
-        if (emailUsuarioAtual == null || emailUsuarioAtual.trim() == '') {
+        if ((emailUsuarioAtual == null || emailUsuarioAtual.trim() == '') && tipoAtribuicao == 'O') {
             throw new Error("O observador <b>[" + codUsuAgente + "]</b> não possui e-mail cadastrado!");
         } else {
 
@@ -64,7 +64,7 @@ for (var j = 0; j < tabAgentesChamado.length; j++) {
                 if (email != '') {
                     var dominio = email.split('@')[1];
                     if (dominio && listaDominiosPermitidos.indexOf(dominio) != -1) {
-                        throw new Error("O e-mail <b>[" + email + "]</b> do observador <b>[" + codUsuAgente + "]</b> não tem domínio permitido!");
+                        throw new Error("O e-mail <b>[" + email + "]</b> do agente <b>[" + codUsuAgente + "]</b> não tem domínio permitido!");
                     }
                 }
 
