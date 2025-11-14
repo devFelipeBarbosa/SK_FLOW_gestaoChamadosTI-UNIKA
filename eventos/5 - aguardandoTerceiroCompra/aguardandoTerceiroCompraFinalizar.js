@@ -42,6 +42,12 @@ if (has) {
 
     if (ci2 = 'N' && jcaRaw != null) {
         c.setCampo('JUSTIFICATIVACANC', null);
+        try {
+            salvarCamposAlterados();
+        } catch (e) {
+            console.error("Erro ao ALTERAR a solução TI: ", e);
+            throw new Error("Erro ao <b>ALTERAR a solução TI</b>! <br>" + e.message)
+        }
     }
 
     var sdt = c.getCampo("STATUSTERCEIRO");
@@ -50,6 +56,3 @@ if (has) {
         throw new Error("Há uma incosistência no <b>Status</b> do Terceiro! Não é permitido finalizar com status nulo ou considerados <b>em andamento/aguardando</b>!");
     }
 }
-
-
-

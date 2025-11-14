@@ -13,10 +13,6 @@ var categoria = getCampo("CATEGORIA") || Number(0);
 var urgencia = getCampo("URGENCIA") || Number(0);
 var titulo = getCampo("TITULO") || '';
 var descricao = getCampo("TEXTOCHAMADO") || '';
-var anexo1 = getCampo("ANEXO1");
-var anexo2 = getCampo("ANEXO2");
-var anexo3 = getCampo("ANEXO3");
-
 
 // Verifica se já existe uma linha na tabela de chamados TI para a solicitação atual 
 for (var i = 0; i < tabChamado.length; i++) {
@@ -41,17 +37,6 @@ if (!linhaExistente) {
     novaLinhaTabChamado.setCampo("URGENCIA", urgencia);
     novaLinhaTabChamado.setCampo("IMPACTO", urgencia); // regra de negócio inicial: Impacto igual Urgência 
     novaLinhaTabChamado.setCampo("PRIORIDADE", 'M');
-
-    if (anexo1) {
-        novaLinhaTabChamado.setCampo("ANEXO1", anexo1);
-    }
-    if (anexo2) {
-        novaLinhaTabChamado.setCampo("ANEXO2", anexo2);
-    }
-    if (anexo3) {
-        novaLinhaTabChamado.setCampo("ANEXO3", anexo3);
-    }
-
     novaLinhaTabChamado.setCampo("CICLO1", 'NA'); // regra de negócio inicial: CICLO1 inicial igual a NA 
     novaLinhaTabChamado.setCampo("CODUSUALTER", codUsu);
     novaLinhaTabChamado.setCampo("TERCEIRO", 'NA'); // TERCEIRO regra do negócio: igual a NA no inicio 
@@ -63,7 +48,6 @@ if (!linhaExistente) {
     novaLinhaTabChamado.setCampo("SALVASOLUCAO", 'S');
     novaLinhaTabChamado.setCampo("BASECONHECIMENTO", 'S');
     novaLinhaTabChamado.setCampo("BLOQ_EXC_HIST", 'N'); // BLOQ_EXC_HIST regra do negócio: igual a N no inicio
-
 
     try {
         novaLinhaTabChamado.save();
@@ -85,17 +69,6 @@ if (!linhaExistente) {
     tabChamado[c].setCampo("URGENCIA", urgencia);
     tabChamado[c].setCampo("IMPACTO", urgencia); // regra de negócio inicial: Impacto igual Urgência 
     tabChamado[c].setCampo("PRIORIDADE", 'M');
-
-    if (anexo1) {
-        tabChamado[c].setCampo("ANEXO1", anexo1);
-    }
-    if (anexo2) {
-        tabChamado[c].setCampo("ANEXO2", anexo2);
-    }
-    if (anexo3) {
-        tabChamado[c].setCampo("ANEXO3", anexo3);
-    }
-
     tabChamado[c].setCampo("CICLO1", 'NA'); // regra de negócio inicial: CICLO1 inicial igual a NA 
     tabChamado[c].setCampo("CODUSUALTER", codUsu);
     tabChamado[c].setCampo("TERCEIRO", 'NA'); // TERCEIRO regra do negócio: igual a NA no inicio 
@@ -144,6 +117,7 @@ if (!temDispositivoVinculado && listaDispositivosAtuais != null) {
         }
     }
 }
+
 
 function listarDispositivosUsuario(codUsu) {
 

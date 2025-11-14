@@ -54,21 +54,23 @@ for (var j = 0; j < tabAgentesChamado.length; j++) {
 
         emailUsuarioAtual = buscarDado("EMAIL", "TSIUSU", "CODUSU = :CODUSU", [codUsuAgente]);
 
-        if ((emailUsuarioAtual == null || emailUsuarioAtual.trim() == '') && tipoAtribuicao == 'O') {
+        if (!emailUsuarioAtual || emailUsuarioAtual.trim() === '') {
             throw new Error("O observador <b>[" + codUsuAgente + "]</b> não possui e-mail cadastrado!");
         } else {
-
             var emails = emailUsuarioAtual.split(",");
             for (var k = 0; k < emails.length; k++) {
-                var email = emails[k].trim();
-                if (email != '') {
-                    var dominio = email.split('@')[1];
-                    if (dominio && listaDominiosPermitidos.indexOf(dominio) != -1) {
-                        throw new Error("O e-mail <b>[" + email + "]</b> do agente <b>[" + codUsuAgente + "]</b> não tem domínio permitido!");
-                    }
+                var email = (emails[k] || '').trim();
+                if (email === '') continue;
+
+                var parts = email.split('@');
+                var dominio = parts.length > 1 ? parts[1].toLowerCase().trim() : null;
+
+                if (dominio && listaDominiosPermitidos.indexOf(dominio) != -1) {
+                    throw new Error("O e-mail <b>[" + email + "]</b> do agente <b>[" + codUsuAgente + "]</b> não tem domínio permitido!");
                 }
 
-                listaEmailsFinal += emailUsuarioAtual + ", ";
+                // adiciona cada email individualmente (evita duplicar toda a string)
+                listaEmailsFinal += email + ", ";
             }
         }
     }

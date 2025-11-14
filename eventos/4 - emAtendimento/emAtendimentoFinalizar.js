@@ -42,6 +42,13 @@ if (has) {
 
     if (ci2 = 'N' && jcaRaw != null) {
         c.setCampo('JUSTIFICATIVACANC', null);
+        try {
+            salvarCamposAlterados();
+        } catch (e) {
+            console.error("Erro ao ALTERAR a solução TI: ", e);
+            throw new Error("Erro ao <b>ALTERAR a solução TI</b>! <br>" + e.message)
+        }
+        
     }
 }
 
