@@ -19,4 +19,16 @@ if (linhaExistente) {
     tabChamado[c].setCampo("IDTAREFA", 'UserTask_0jnfn7w');
     tabChamado[c].setCampo("STATUSCHAMADO", 'F');
     tabChamado[c].setCampo("BLOQ_EXC_HIST", 'S'); // BLOQ_EXC_HIST
+    tabChamado[c].setCampo("CICLO3", 'N');
+    tabChamado[c].setCampo("JUSTIFICATIVASOLUCAO", '');
+    tabChamado[c].setCampo("CICLO2", 'N'); // CICLO2 = 'N' para não permitir que o chamado seja fechado na próxima tarefa
+    tabChamado[c].setCampo("JUSTIFICATIVACANC", ''); // JUSTIFICATIVACANC = '' para não permitir que o chamado seja cancelado na próxima tarefa
+
+    try {
+        salvarCamposAlterados();
+    } catch (e) {
+        console.error("Erro ao atualizar a solicitação na tabela de chamados TI: ", e);
+        throw new Error("Erro ao <b>atualizar a solicitação na tabela de chamados TI</b>! <br>" + e.message);
+
+    }
 }
