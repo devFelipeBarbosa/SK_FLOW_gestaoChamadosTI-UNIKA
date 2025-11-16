@@ -1,0 +1,51 @@
+<gadget ><prompt-parameters><parameter  id="P_DHINCLUSAO" description="Dh. Inclusão" metadata="datePeriod" required="true" keep-last="true" keep-date="false" show-inactives="false" label="P_DHINCLUSAO : Período" order="0"/><parameter  id="P_DHCONCLUSAO" description="Dh. Conclusão" metadata="datePeriod" required="false" keep-last="true" keep-date="false" show-inactives="false" label="P_DHCONCLUSAO : Período" order="1"/><parameter  id="P_IDINSTPRN" description="Nro. Solicitação" metadata="integer" required="false" keep-last="true" keep-date="false" show-inactives="false" range-end="9999999999" range-ini="0" label="P_IDINSTPRN : Número Inteiro" order="2"/><parameter  id="P_CODSOLICITANTE" description="Cód. Solicitante" metadata="entity:Usuario@CODUSU" required="false" keep-last="true" keep-date="false" show-inactives="false" label="P_CODSOLICITANTE : Entidade/Tabela" order="3"/><parameter  id="P_CODRESPONSAVEL" description="Cód. Responsável" metadata="entity:Usuario@CODUSU" required="false" keep-last="true" keep-date="false" show-inactives="false" label="P_CODRESPONSAVEL : Entidade/Tabela" order="4"/></prompt-parameters><level id="023" description="Principal"><container orientacao="V" tamanhoRelativo="100"><container orientacao="H" tamanhoRelativo="22.477363081417575"><simple-value id="svl_028"></simple-value></container><container orientacao="H" tamanhoRelativo="45.89689108241551"><grid id="grd_02E" useNewGrid="S"><expression type="sql" data-source="MGEDS"><![CDATA[SELECT 
+ CAB.IDINSTPRN
+,CAB.DHINCLUSAO
+,CAB.DHCONCLUSAO
+,PRN.CODPRN
+,PRN.NOME 
+,NVL(VWS.TAREFA_ATUAL, CASE WHEN CAB.SITUACAOEXEC = 'F' THEN 'Solic. Finalizada' Else 'Solic. Cancelada' END) AS TAREFA_ATUAL
+,CHA.STATUSCHAMADO
+,(SELECT OPC.OPCAO FROM TDDCAM CAM INNER JOIN TDDOPC OPC ON (CAM.NUCAMPO=OPC.NUCAMPO) WHERE NOMETAB='AD_CHAMADOTI' AND NOMECAMPO='STATUSCHAMADO' AND OPC.VALOR = CHA.STATUSCHAMADO) AS DESCSTATUS
+,CAB.CODUSUINC AS SOLICITANTE
+,(SELECT SOL.NOMEUSU FROM TSIUSU SOL WHERE SOL.CODUSU = CAB.CODUSUINC) AS NOMESOL
+,ROUND(VWS.RESPONSAVEL_TAREFA_ATUAL) AS RESPONSAVEL
+,(SELECT SOL.NOMEUSU FROM TSIUSU SOL WHERE SOL.CODUSU = VWS.RESPONSAVEL_TAREFA_ATUAL) AS NOMERESPONSAVEL
+,CAB.SITUACAOEXEC
+,(SELECT OPC.OPCAO FROM TDDCAM CAM INNER JOIN TDDOPC OPC ON (CAM.NUCAMPO=OPC.NUCAMPO) WHERE NOMETAB='TWFIPRN' AND NOMECAMPO='SITUACAOEXEC' AND OPC.VALOR = CAB.SITUACAOEXEC) AS DESCSITUACAO
+,CHA.TIPO
+,(SELECT OPC.OPCAO FROM TDDCAM CAM INNER JOIN TDDOPC OPC ON (CAM.NUCAMPO=OPC.NUCAMPO) WHERE NOMETAB='AD_CHAMADOTI' AND NOMECAMPO='TIPO' AND OPC.VALOR = CHA.TIPO) AS DESCTIPO
+,CHA.ID_CATEGORIATI
+,CAT.DESCRICAO AS CATEGORIA
+,CHA.CODLOCAL
+,LOC.DESCRLOCAL
+,CHA.ORIGEMCHAMADO
+,(SELECT OPC.OPCAO FROM TDDCAM CAM INNER JOIN TDDOPC OPC ON (CAM.NUCAMPO=OPC.NUCAMPO) WHERE NOMETAB='AD_CHAMADOTI' AND NOMECAMPO='ORIGEMCHAMADO' AND OPC.VALOR = CHA.ORIGEMCHAMADO) AS DESCORIGEM
+,CHA.URGENCIA
+,(SELECT OPC.OPCAO FROM TDDCAM CAM INNER JOIN TDDOPC OPC ON (CAM.NUCAMPO=OPC.NUCAMPO) WHERE NOMETAB='AD_CHAMADOTI' AND NOMECAMPO='URGENCIA' AND OPC.VALOR = CHA.URGENCIA) AS DESCURGENCIA
+,CHA.IMPACTO
+,(SELECT OPC.OPCAO FROM TDDCAM CAM INNER JOIN TDDOPC OPC ON (CAM.NUCAMPO=OPC.NUCAMPO) WHERE NOMETAB='AD_CHAMADOTI' AND NOMECAMPO='IMPACTO' AND OPC.VALOR = CHA.IMPACTO) AS DESCIMPACTO
+,CHA.PRIORIDADE
+,(SELECT OPC.OPCAO FROM TDDCAM CAM INNER JOIN TDDOPC OPC ON (CAM.NUCAMPO=OPC.NUCAMPO) WHERE NOMETAB='AD_CHAMADOTI' AND NOMECAMPO='PRIORIDADE' AND OPC.VALOR = CHA.PRIORIDADE) AS DESCPRIORIDADE
+,NVL(VWS.TEMPO_FILA, 0) AS TEMPO_FILA
+,NVL(VWS.TEMPO_ATENDIMENTO, 0) AS TEMPO_ATENDIMENTO
+,NVL(VWS.TEMPO_EXECUCAO, 0) AS TEMPO_EXECUCAO
+,NVL(VWS.EFIC_EXECUCAO, 0) * 100 AS EFIC_EXECUCAO
+,NVL(VWS.EFIC_FILA, 0) * 100 AS EFIC_FILA
+
+FROM AD_CHAMADOTI CHA
+INNER JOIN TWFIPRN CAB ON (CHA.IDINSTPRN = CAB.IDINSTPRN)
+INNER JOIN TWFPRN PRN ON (CAB.CODPRN = PRN.CODPRN AND CAB.VERSAO = PRN.VERSAO)
+INNER JOIN VWFSOLI VWS ON (VWS.IDINSTPRN = CHA.IDINSTPRN)
+ LEFT JOIN AD_CATEGORIATI CAT ON (CAT.ID_CATEGORIATI = CHA.ID_CATEGORIATI)
+ LEFT JOIN TGFLOC LOC ON (LOC.CODLOCAL = CHA.CODLOCAL)
+
+WHERE 
+(CAB.DHINCLUSAO >= :P_DHINCLUSAO.INI AND CAB.DHINCLUSAO <= TO_DATE(:P_DHINCLUSAO.FIN))
+AND ((CAB.DHCONCLUSAO >= :P_DHCONCLUSAO.INI OR :P_DHCONCLUSAO.INI IS NULL) AND (CAB.DHCONCLUSAO <= TO_DATE(:P_DHCONCLUSAO.FIN) OR :P_DHCONCLUSAO.FIN IS NULL))
+AND (CHA.IDINSTPRN = :P_IDINSTPRN OR :P_IDINSTPRN IS NULL)
+AND (CAB.CODUSUINC = :P_CODSOLICITANTE OR :P_CODSOLICITANTE IS NULL)
+AND (VWS.RESPONSAVEL_TAREFA_ATUAL = :P_CODRESPONSAVEL OR :P_CODRESPONSAVEL IS NULL)
+
+
+ORDER BY 1 DESC]]></expression><metadata><field name="IDINSTPRN" label="Nro. Solicitação" type="I" visible="true" useFooter="false"></field><field name="DHINCLUSAO" label="Dh. Inclusão" type="T" visible="true" useFooter="false"></field><field name="DHCONCLUSAO" label="Dh. Conclusão" type="T" visible="true" useFooter="false"></field><field name="CODPRN" label="Cód. Processo" type="I" visible="true" useFooter="false"></field><field name="NOME" label="Processo" type="S" visible="true" useFooter="false"></field><field name="TAREFA_ATUAL" label="Tarefa Atual" type="S" visible="true" useFooter="false"></field><field name="STATUSCHAMADO" label="Status Chamado" type="S" visible="true" useFooter="false"></field><field name="DESCSTATUS" label="Desc. Status" type="S" visible="true" useFooter="false"></field><field name="SOLICITANTE" label="Cód. Solicitante" type="I" visible="false" useFooter="false"></field><field name="NOMESOL" label="Nome Solicitante" type="S" visible="true" useFooter="false"></field><field name="RESPONSAVEL" label="Resp. Atual" type="I" visible="false" useFooter="false"></field><field name="NOMERESPONSAVEL" label="Nome Resp. Atual" type="S" visible="true" useFooter="false"></field><field name="SITUACAOEXEC" label="Cód. Situação" type="S" visible="false" useFooter="false"></field><field name="DESCSITUACAO" label="Situação Execução" type="S" visible="true" useFooter="false"></field><field name="TIPO" label="Cód. Tipo" type="S" visible="false" useFooter="false"></field><field name="DESCTIPO" label="Tipo" type="S" visible="true" useFooter="false"></field><field name="ID_CATEGORIATI" label="Cód. Categoria" type="I" visible="true" useFooter="false"></field><field name="CATEGORIA" label="Categoria" type="S" visible="true" useFooter="false"></field><field name="CODLOCAL" label="Cód. Local" type="I" visible="true" useFooter="false"></field><field name="DESCRLOCAL" label="Local" type="S" visible="true" useFooter="false"></field><field name="ORIGEMCHAMADO" label="Cód. Origem" type="S" visible="false" useFooter="false"></field><field name="DESCORIGEM" label="Origem Chamado" type="S" visible="true" useFooter="false"></field><field name="URGENCIA" label="Cód. Urgência" type="S" visible="false" useFooter="false"></field><field name="DESCURGENCIA" label="Urgência" type="S" visible="true" useFooter="false"></field><field name="IMPACTO" label="Cód. Impacto" type="S" visible="false" useFooter="false"></field><field name="DESCIMPACTO" label="Impacto" type="S" visible="true" useFooter="false"></field><field name="PRIORIDADE" label="Cód. Prioridade" type="S" visible="false" useFooter="false"></field><field name="DESCPRIORIDADE" label="Prioridade" type="S" visible="true" useFooter="false"></field><field name="TEMPO_FILA" label="Tempo Fila" type="F" visible="true" useFooter="SUM" mask="#.##0,00;-n"></field><field name="TEMPO_ATENDIMENTO" label="Tempo Atendimento" type="F" visible="true" useFooter="SUM" mask="#.##0,00;-n"></field><field name="TEMPO_EXECUCAO" label="Tempo Execução" type="F" visible="true" useFooter="SUM" mask="#.##0,00;-n"></field><field name="EFIC_EXECUCAO" label="Eficiência Exec." type="F" visible="true" useFooter="false" mask="#.##0,00 %"></field><field name="EFIC_FILA" label="Eficiência Fila" type="F" visible="true" useFooter="false" mask="#.##0,00 %"></field></metadata></grid></container><container orientacao="H" tamanhoRelativo="32.70658220829025"></container></container></level></gadget>
